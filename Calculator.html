@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: #fff;
+            border: 1px solid #2980b9;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 400px;
+        }
+
+        .screen {
+            background-color: #fff;
+            border: 1px solid #70c3fb;
+            padding: 10px;
+            text-align: right;
+            font-size: 28px;
+            color: #3498db;
+            border-radius: 5px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            padding: 10px;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 15px;
+            background-color: #70c3fb;
+            border: 1px solid #2980b9;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .clear {
+            background-color: #e74c3c;
+            border: 1px solid #c0392b;
+        }
+
+        .clear:hover {
+            background-color: #c0392b;
+        }
+
+        .operator {
+            background-color: #f1c40f;
+            border: 1px solid #d4ac0d;
+        }
+
+        .operator:hover {
+            background-color: #d4ac0d;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="screen" id="display">0</div>
+        <div class="buttons">
+            <button class="number" onclick="appendToDisplay('7')">7</button>
+            <button class="number" onclick="appendToDisplay('8')">8</button>
+            <button class="number" onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            <button class="number" onclick="appendToDisplay('4')">4</button>
+            <button class="number" onclick="appendToDisplay('5')">5</button>
+            <button class="number" onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+            <button class="number" onclick="appendToDisplay('1')">1</button>
+            <button class="number" onclick="appendToDisplay('2')">2</button>
+            <button class="number" onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendOperator('*')">*</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="number" onclick="appendToDisplay('0')">0</button>
+            <button class="number" onclick="appendDecimal('.')">.</button>
+            <button class="operator" onclick="appendOperator('/')">/</button>
+            <button class="operator" onclick="calculateResult()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '0';
+        let currentOperator = '';
+        let firstOperand = null;
+        let showResult = false;
+
+        function appendToDisplay(value) {
+            if (showResult) {
+                display.textContent = value;
+                showResult = false;
+            } else {
+                if (currentInput === '0') {
+                    currentInput = value;
+                } else {
+                    currentInput += value;
+                }
+                display.textContent = currentInput;
+            }
+        }
+
+        function appendOperator(operator) {
+            if (showResult) {
+                firstOperand = parseFloat(currentInput);
+                currentInput = '0';
+                showResult = false;
+            }
+            if (currentInput !== '0') {
+                if (firstOperand === null) {
+                    firstOperand = parseFloat(currentInput);
+                } else {
+                    firstOperand = performOperation();
+                }
+                currentInput = '0';
+                currentOperator = operator;
+            }
+        }
+
+        function appendDecimal() {
+            if (!currentInput.includes('.') && !showResult) {
+                currentInput += '.';
+                display.textContent = currentInput;
+            }
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            currentOperator = '';
+            firstOperand = null;
+            display.textContent = currentInput;
+        }
+
+        function performOperation() {
+            const secondOperand = parseFloat(currentInput);
+            if (currentOperator === '+') {
+                return firstOperand + secondOperand;
+            } else if (currentOperator === '-') {
+                return firstOperand - secondOperand;
+            } else if (currentOperator === '*') {
+                return firstOperand * secondOperand;
+            } else if (currentOperator === '/') {
+                if (secondOperand === 0) {
+                    alert('Division by zero is not allowed.');
+                    clearDisplay();
+                    return 0;
+                }
+                return firstOperand / secondOperand;
+            }
+        }
+
+        function calculateResult() {
+            if (currentInput !== '0' && currentOperator !== '' && firstOperand !== null) {
+                display.textContent = performOperation();
+                currentInput = display.textContent;
+                currentOperator = '';
+                firstOperand = null;
+                showResult = true;
+            }
+        }
+    </script>
+</body>
+</html>
